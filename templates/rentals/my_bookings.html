@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load rentals_tags %}
+
+{% block title %}My bookings: {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="pagehead">
+  <div class="wrap"><h1>My bookings</h1></div>
+</section>
+
+<div class="wrap narrow">
+  <h2 class="list-h">Coming up</h2>
+  {% if upcoming %}
+  <ul class="blist">
+    {% for b in upcoming %}{% include "rentals/partials/booking_row.html" %}{% endfor %}
+  </ul>
+  {% else %}
+  <div class="emptystate emptystate--small">
+    <p>No upcoming rentals. Your next beach day starts with a vehicle.</p>
+    <a class="btn btn--flag" href="{% url 'vehicle_list' %}">Browse vehicles</a>
+  </div>
+  {% endif %}
+
+  {% if past %}
+  <h2 class="list-h">Past and cancelled</h2>
+  <ul class="blist blist--past">
+    {% for b in past %}{% include "rentals/partials/booking_row.html" %}{% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endblock %}

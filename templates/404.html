@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Page not found: {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="wrap narrow emptystate" style="margin-block:96px">
+  <h1>This page washed out to sea</h1>
+  <p>The link may be old, or the vehicle is no longer in the fleet.</p>
+  <a class="btn btn--lagoon" href="{% url 'vehicle_list' %}">Browse vehicles</a>
+</div>
+{% endblock %}

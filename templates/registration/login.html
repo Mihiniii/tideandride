@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Log in: {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="wrap auth">
+  <div class="panel">
+    <h1>Log in</h1>
+    <p class="auth-sub">See your bookings and book a vehicle.</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<p class="alert">Those details don't match an account. Check your username and password.</p>{% endif %}
+      {% include "rentals/partials/field.html" with field=form.username %}
+      {% include "rentals/partials/field.html" with field=form.password %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <button class="btn btn--lagoon btn--lg btn--block" type="submit">Log in</button>
+    </form>
+    <p class="auth-switch">New here? <a href="{% url 'signup' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Create an account</a></p>
+  </div>
+</div>
+{% endblock %}

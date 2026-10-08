@@ -1,0 +1,74 @@
+{# Vehicle drawing used when there is no photo. Pass kind="scooter|tuktuk|bicycle|buggy|jeep|van". #}
+<svg class="art art--{{ kind }}" viewBox="0 0 320 200" role="img" aria-label="{{ label|default:kind }}" xmlns="http://www.w3.org/2000/svg">
+  <circle class="art-sun" cx="262" cy="46" r="22"/>
+  <path class="art-sea" d="M0 150 Q40 142 80 150 T160 150 T240 150 T320 150 V200 H0Z"/>
+  <path class="art-sand" d="M0 170 Q80 160 160 168 T320 166 V200 H0Z"/>
+  <ellipse class="art-shadow" cx="165" cy="178" rx="120" ry="6"/>
+  {% if kind == "tuktuk" %}
+  <g class="art-vehicle">
+    <path class="art-body" d="M72 160 V82 Q74 52 112 50 H196 Q228 50 240 80 L262 136 V160 Z"/>
+    <path class="art-trim" d="M70 82 Q74 52 112 50 H196 Q228 50 240 80 Z"/>
+    <path class="art-glass" d="M182 70 H220 Q228 72 232 84 L240 108 H182 Z"/>
+    <rect class="art-open" x="96" y="78" width="66" height="54" rx="8"/>
+    <rect class="art-line-fill" x="102" y="112" width="54" height="10" rx="5"/>
+    <circle class="art-light" cx="254" cy="124" r="6"/>
+    <circle class="art-wheel" cx="104" cy="160" r="20"/><circle class="art-hub" cx="104" cy="160" r="6"/>
+    <circle class="art-wheel" cx="236" cy="160" r="20"/><circle class="art-hub" cx="236" cy="160" r="6"/>
+  </g>
+  {% elif kind == "bicycle" %}
+  <g class="art-vehicle art-vehicle--lines">
+    <circle class="art-wheel art-wheel--thin" cx="92" cy="138" r="38"/><circle class="art-hub" cx="92" cy="138" r="5"/>
+    <circle class="art-wheel art-wheel--thin" cx="238" cy="138" r="38"/><circle class="art-hub" cx="238" cy="138" r="5"/>
+    <polyline class="art-frame" points="92,138 150,138 206,92 132,92 92,138"/>
+    <line class="art-frame" x1="150" y1="138" x2="124" y2="76"/>
+    <line class="art-frame" x1="206" y1="92" x2="238" y2="138"/>
+    <line class="art-frame" x1="206" y1="92" x2="200" y2="68"/>
+    <path class="art-frame" d="M188 66 H218"/>
+    <rect class="art-body" x="108" y="66" width="34" height="11" rx="5.5"/>
+    <path class="art-body" d="M214 74 H262 L256 102 H220 Z"/>
+    <circle class="art-hub" cx="150" cy="138" r="8"/>
+  </g>
+  {% elif kind == "buggy" %}
+  <g class="art-vehicle">
+    <polyline class="art-frame" points="96,112 122,56 204,56 232,110"/>
+    <line class="art-frame" x1="160" y1="56" x2="168" y2="110"/>
+    <path class="art-body" d="M46 142 L78 112 H246 L286 128 V146 H46 Z"/>
+    <path class="art-trim" d="M120 112 H210 L204 98 H128 Z"/>
+    <circle class="art-light" cx="278" cy="132" r="5"/>
+    <circle class="art-wheel art-wheel--fat" cx="92" cy="148" r="28"/><circle class="art-hub" cx="92" cy="148" r="8"/>
+    <circle class="art-wheel art-wheel--fat" cx="244" cy="148" r="28"/><circle class="art-hub" cx="244" cy="148" r="8"/>
+  </g>
+  {% elif kind == "jeep" %}
+  <g class="art-vehicle">
+    <path class="art-body" d="M50 148 V96 H124 L138 58 H214 L222 96 H282 Q290 98 290 108 V148 Z"/>
+    <path class="art-glass" d="M146 68 H170 V96 H136 Z"/>
+    <path class="art-glass" d="M180 68 H206 L212 96 H180 Z"/>
+    <rect class="art-trim" x="50" y="118" width="240" height="8"/>
+    <circle class="art-wheel" cx="38" cy="114" r="18"/><circle class="art-hub" cx="38" cy="114" r="5"/>
+    <circle class="art-light" cx="282" cy="108" r="6"/>
+    <circle class="art-wheel art-wheel--fat" cx="100" cy="150" r="26"/><circle class="art-hub" cx="100" cy="150" r="7"/>
+    <circle class="art-wheel art-wheel--fat" cx="240" cy="150" r="26"/><circle class="art-hub" cx="240" cy="150" r="7"/>
+  </g>
+  {% elif kind == "van" %}
+  <g class="art-vehicle">
+    <rect class="art-board" x="64" y="24" width="200" height="14" rx="7"/>
+    <path class="art-body" d="M42 150 V62 Q42 44 62 44 H226 Q254 44 268 78 L286 110 Q292 118 292 130 V150 Z"/>
+    <rect class="art-trim" x="42" y="104" width="250" height="14"/>
+    <rect class="art-glass" x="62" y="60" width="46" height="34" rx="6"/>
+    <rect class="art-glass" x="118" y="60" width="46" height="34" rx="6"/>
+    <path class="art-glass" d="M176 60 H226 Q244 60 254 80 L262 94 H176 Z"/>
+    <circle class="art-light" cx="284" cy="132" r="6"/>
+    <circle class="art-wheel" cx="96" cy="152" r="24"/><circle class="art-hub" cx="96" cy="152" r="7"/>
+    <circle class="art-wheel" cx="240" cy="152" r="24"/><circle class="art-hub" cx="240" cy="152" r="7"/>
+  </g>
+  {% else %}
+  <g class="art-vehicle">
+    <path class="art-body" d="M60 150 C56 112 82 96 120 96 H158 C166 96 170 104 170 112 V130 H210 L226 64 H240 L264 146 H234 C228 130 214 126 202 138 L132 142 C126 126 112 120 96 122 C78 124 66 136 64 150 Z"/>
+    <rect class="art-seat" x="96" y="82" width="66" height="15" rx="7.5"/>
+    <path class="art-frame" d="M222 60 L254 52"/>
+    <circle class="art-light" cx="240" cy="74" r="7"/>
+    <circle class="art-wheel" cx="98" cy="152" r="24"/><circle class="art-hub" cx="98" cy="152" r="7"/>
+    <circle class="art-wheel" cx="246" cy="152" r="24"/><circle class="art-hub" cx="246" cy="152" r="7"/>
+  </g>
+  {% endif %}
+</svg>

@@ -1,0 +1,14 @@
+{% load rentals_tags %}
+<li>
+  <a class="brow" href="{% url 'booking_detail' b.reference %}">
+    {% with vehicle=b.vehicle %}{% include "rentals/partials/media.html" %}{% endwith %}
+    <span class="brow-main">
+      <span class="brow-name">{{ b.vehicle.name }}</span>
+      <span class="brow-meta">{{ b.pickup_date|date:"j M" }} to {{ b.return_date|date:"j M Y" }}, {{ b.vehicle.location.name }}</span>
+    </span>
+    <span class="brow-side">
+      <span class="pill pill--{{ b.status }}">{{ b.get_status_display }}</span>
+      <span class="brow-total">{{ b.total_price|money }}</span>
+    </span>
+  </a>
+</li>

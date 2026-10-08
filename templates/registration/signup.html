@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Create an account: {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="wrap auth">
+  <div class="panel">
+    <h1>Create an account</h1>
+    <p class="auth-sub">You'll use it to book and to manage your rentals.</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for e in form.non_field_errors %}<p class="alert">{{ e }}</p>{% endfor %}
+      {% include "rentals/partials/field.html" with field=form.first_name %}
+      {% include "rentals/partials/field.html" with field=form.username %}
+      {% include "rentals/partials/field.html" with field=form.email %}
+      {% include "rentals/partials/field.html" with field=form.password1 %}
+      {% include "rentals/partials/field.html" with field=form.password2 %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <button class="btn btn--lagoon btn--lg btn--block" type="submit">Create account</button>
+    </form>
+    <p class="auth-switch">Already have one? <a href="{% url 'login' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Log in</a></p>
+  </div>
+</div>
+{% endblock %}

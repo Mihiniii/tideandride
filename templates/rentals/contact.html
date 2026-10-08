@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Contact: {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="pagehead">
+  <div class="wrap">
+    <h1>Talk to a host</h1>
+    <p>Questions about licences, long rentals or delivery to your villa. We answer from 7am to 9pm, every day.</p>
+  </div>
+</section>
+
+<div class="wrap contact">
+  <form method="post" class="panel" novalidate>
+    {% csrf_token %}
+    {% include "rentals/partials/field.html" with field=form.name %}
+    {% include "rentals/partials/field.html" with field=form.email %}
+    {% include "rentals/partials/field.html" with field=form.message %}
+    <button class="btn btn--lagoon btn--lg" type="submit">Send message</button>
+  </form>
+
+  <div class="contact-side">
+    <h2>Faster by phone</h2>
+    <p class="contact-big"><a href="tel:{{ SITE_PHONE|cut:' ' }}">{{ SITE_PHONE }}</a></p>
+    <p>Call or WhatsApp. If you're already riding and something's wrong, call the number on your key tag instead.</p>
+    {% if locations %}
+    <h2>Beach shops</h2>
+    <ul class="plain">
+      {% for loc in locations %}<li><strong>{{ loc.name }}</strong>{% if loc.tagline %}: {{ loc.tagline }}{% endif %}</li>{% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,8 @@
+{# Photo if uploaded, otherwise the category drawing. Needs `vehicle`. #}
+<div class="media media--{{ vehicle.category.illustration }}">
+  {% if vehicle.image %}
+    <img src="{{ vehicle.image.url }}" alt="{{ vehicle.name }}" loading="lazy">
+  {% else %}
+    {% include "rentals/partials/art.html" with kind=vehicle.category.illustration label=vehicle.name %}
+  {% endif %}
+</div>

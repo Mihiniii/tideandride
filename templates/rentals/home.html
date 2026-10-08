@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load rentals_tags %}
+
+{% block body_class %}page-home{% endblock %}
+{% block nav_class %}nav--on-sea{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <svg class="hero-scene" viewBox="0 0 1440 640" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <circle class="hero-sun" cx="1060" cy="200" r="120"/>
+    <g class="hero-palm">
+      <path d="M1290 640 C1280 520 1262 420 1222 330" class="palm-trunk"/>
+      <path d="M1222 330 C1180 300 1120 300 1080 330 C1130 318 1180 322 1222 336Z"/>
+      <path d="M1222 330 C1214 280 1240 240 1290 226 C1260 260 1240 296 1226 338Z"/>
+      <path d="M1222 330 C1260 296 1320 290 1366 314 C1316 314 1270 320 1228 340Z"/>
+      <path d="M1222 330 C1186 340 1160 372 1152 410 C1176 380 1200 360 1226 342Z"/>
+      <path d="M1222 330 C1262 334 1300 360 1316 400 C1286 374 1256 356 1224 344Z"/>
+    </g>
+    <path class="hero-wave hero-wave--1" d="M0 470 Q120 440 240 470 T480 470 T720 470 T960 470 T1200 470 T1440 470 T1680 470 T1920 470 V640 H0Z"/>
+    <path class="hero-wave hero-wave--2" d="M0 520 Q160 490 320 520 T640 520 T960 520 T1280 520 T1600 520 T1920 520 V640 H0Z"/>
+    <path class="hero-sand" d="M0 586 Q360 556 720 584 T1440 578 V640 H0Z"/>
+  </svg>
+
+  <div class="wrap hero-inner">
+    <h1 class="hero-title">Scooters, tuk-tuks and buggies, waiting by the beach.</h1>
+    <p class="hero-sub">Pick a beach and your dates. We'll have it fuelled and parked by the sand, or at your hotel gate.</p>
+
+    <form class="ticket" action="{% url 'vehicle_list' %}" method="get" aria-label="Find a vehicle">
+      <div class="ticket-main">
+        <div class="field">
+          <label for="id_location">Beach</label>
+          {{ form.location }}
+        </div>
+        <div class="field">
+          <label for="id_category">Vehicle</label>
+          {{ form.category }}
+        </div>
+        <div class="field">
+          <label for="id_pickup">Pickup</label>
+          {{ form.pickup }}
+        </div>
+        <div class="field">
+          <label for="id_dropoff">Return</label>
+          {{ form.dropoff }}
+        </div>
+      </div>
+      <div class="ticket-stub">
+        <button class="btn btn--flag btn--lg" type="submit">Find a ride</button>
+        <p class="ticket-note">{{ fleet_size }} vehicle{{ fleet_size|pluralize }} on the coast today</p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="section section--rides" aria-labelledby="rides-h">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="rides-h">Pick your ride</h2>
+      <a class="textlink" href="{% url 'vehicle_list' %}">See the whole fleet</a>
+    </div>
+    <ul class="rides">
+      {% for c in categories %}
+      <li>
+        <a class="ride media--{{ c.illustration }}" href="{% url 'vehicle_list' %}?category={{ c.slug }}">
+          {% include "rentals/partials/art.html" with kind=c.illustration label=c.name %}
+          <span class="ride-name">{{ c.name }}</span>
+          <span class="ride-meta">{% if c.n %}From {{ c.from_price|money }} a day{% else %}Coming soon{% endif %}</span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{% if featured %}
+<section class="section" aria-labelledby="featured-h">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="featured-h">Most booked this season</h2>
+    </div>
+    <div class="grid">
+      {% for vehicle in featured %}
+        {% include "rentals/partials/vehicle_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section section--steps" aria-labelledby="steps-h">
+  <div class="wrap">
+    <h2 id="steps-h">From booking to beach in three steps</h2>
+    <ol class="steps">
+      <li>
+        <h3>Choose a beach and dates</h3>
+        <p>Every vehicle shows its pickup beach and real price per day. No booking fee.</p>
+      </li>
+      <li>
+        <h3>We call to confirm</h3>
+        <p>A local host rings you within a few hours to agree the handover time and spot.</p>
+      </li>
+      <li>
+        <h3>Ride off from the sand</h3>
+        <p>Show your licence, pay the deposit in cash or card, take the keys and helmets.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section section--beaches" id="beaches" aria-labelledby="beaches-h">
+  <div class="wrap">
+    <h2 id="beaches-h">Where you can pick up</h2>
+    <ul class="beaches">
+      {% for loc in locations %}
+      <li>
+        <a href="{% url 'vehicle_list' %}?location={{ loc.slug }}">
+          <span class="beach-name">{{ loc.name }}</span>
+          <span class="beach-tag">{{ loc.tagline }}</span>
+          <span class="beach-count">{{ loc.n }} vehicle{{ loc.n|pluralize }}{% if loc.coast %}, {{ loc.coast|lower }}{% endif %}</span>
+        </a>
+      </li>
+      {% empty %}
+      <li class="empty">No beaches yet. Add one in the admin, or run <code>python manage.py seed_demo</code>.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="section section--promise">
+  <div class="wrap promise">
+    <div>
+      <h2>Helmets, a lock and a local number in every rental</h2>
+      <p>Flat tyre in Weligama at sunset? Call the number on your key tag. A host comes to you, usually inside the hour.</p>
+    </div>
+    <a class="btn btn--flag btn--lg" href="{% url 'vehicle_list' %}">Browse vehicles</a>
+  </div>
+</section>
+{% endblock %}

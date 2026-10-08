@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load rentals_tags %}
+
+{% block title %}{{ vehicle.name }} in {{ vehicle.location.name }}: {{ SITE_NAME }}{% endblock %}
+{% block description %}{{ vehicle.summary|default:vehicle.name }}. {{ vehicle.price_per_day|money }} a day in {{ vehicle.location.name }}.{% endblock %}
+
+{% block content %}
+<div class="wrap detail">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="{% url 'vehicle_list' %}">Fleet</a>
+    <span aria-hidden="true">/</span>
+    <a href="{% url 'vehicle_list' %}?category={{ vehicle.category.slug }}">{{ vehicle.category.name }}</a>
+  </nav>
+
+  <div class="detail-grid">
+    <div class="detail-main">
+      {% include "rentals/partials/media.html" %}
+
+      <header class="detail-head">
+        <p class="vcard-place">{{ vehicle.location.name }}{% if vehicle.location.coast %}, {{ vehicle.location.coast|lower }}{% endif %}</p>
+        <h1>{{ vehicle.name }}</h1>
+        {% if vehicle.summary %}<p class="lede">{{ vehicle.summary }}</p>{% endif %}
+      </header>
+
+      <dl class="spec-table">
+        <div><dt>Seats</dt><dd>{{ vehicle.seats }}</dd></div>
+        <div><dt>Gearbox</dt><dd>{{ vehicle.get_transmission_display }}</dd></div>
+        <div><dt>Fuel</dt><dd>{{ vehicle.get_fuel_display }}</dd></div>
+        <div><dt>Licence</dt><dd>{{ vehicle.get_licence_display }}</dd></div>
+        <div><dt>Board rack</dt><dd>{{ vehicle.surfboard_rack|yesno:"Yes,No" }}</dd></div>
+        <div><dt>Helmets</dt><dd>{{ vehicle.helmets_included|yesno:"Included,Not needed" }}</dd></div>
+        <div><dt>Deposit</dt><dd>{% if vehicle.deposit %}{{ vehicle.deposit|money }}, refunded on return{% else %}None{% endif %}</dd></div>
+      </dl>
+
+      {% if vehicle.feature_list %}
+      <section class="detail-block">
+        <h2>Comes with</h2>
+        <ul class="ticks">
+          {% for f in vehicle.feature_list %}<li>{{ f }}</li>{% endfor %}
+        </ul>
+      </section>
+      {% endif %}
+
+      {% if vehicle.description %}
+      <section class="detail-block prose">
+        <h2>About this vehicle</h2>
+        {{ vehicle.description|linebreaks }}
+      </section>
+      {% endif %}
+
+      {% if booked_ranges %}
+      <section class="detail-block">
+        <h2>Already booked</h2>
+        <ul class="booked">
+          {% for start, end in booked_ranges %}
+            <li>{{ start|date:"D j M" }} to {{ end|date:"D j M" }}</li>
+          {% endfor %}
+        </ul>
+      </section>
+      {% endif %}
+    </div>
+
+    <aside class="detail-side">
+      <div class="bookcard" id="book">
+        <p class="bookcard-price"><strong>{{ vehicle.price_per_day|money }}</strong> a day</p>
+
+        {% if user.is_authenticated %}
+        <form method="post" novalidate data-price="{{ vehicle.price_per_day|floatformat:0 }}" data-currency="{{ CURRENCY }}" class="bookform">
+          {% csrf_token %}
+          {% for e in form.non_field_errors %}<p class="alert">{{ e }}</p>{% endfor %}
+          <div class="row2">
+            {% include "rentals/partials/field.html" with field=form.pickup_date %}
+            {% include "rentals/partials/field.html" with field=form.return_date %}
+          </div>
+
+          <fieldset class="field handover">
+            <legend>{{ form.handover.label }}</legend>
+            {% for radio in form.handover %}
+              <label class="radio">{{ radio.tag }} <span>{{ radio.choice_label }}</span></label>
+            {% endfor %}
+          </fieldset>
+          {% include "rentals/partials/field.html" with field=form.hotel_name extra_class="hotel-field" %}
+          {% include "rentals/partials/field.html" with field=form.full_name %}
+          <div class="row2">
+            {% include "rentals/partials/field.html" with field=form.phone %}
+            {% include "rentals/partials/field.html" with field=form.email %}
+          </div>
+          {% include "rentals/partials/field.html" with field=form.notes %}
+
+          <div class="sum" aria-live="polite">
+            <p><span data-sum-days>Choose dates</span><span data-sum-total></span></p>
+            {% if vehicle.deposit %}<p class="sum-dep"><span>Deposit at pickup</span><span>{{ vehicle.deposit|money }}</span></p>{% endif %}
+          </div>
+          <button class="btn btn--flag btn--lg btn--block" type="submit">Request booking</button>
+          <p class="fine">Nothing to pay now. You pay the host at handover.</p>
+        </form>
+        {% else %}
+        <p class="bookcard-copy">Log in to choose dates and book. It takes a minute, and you'll see all your bookings in one place.</p>
+        <a class="btn btn--flag btn--lg btn--block" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">Log in to book</a>
+        <a class="btn btn--ghost btn--block" href="{% url 'signup' %}?next={{ request.get_full_path|urlencode }}">Create an account</a>
+        {% endif %}
+      </div>
+    </aside>
+  </div>
+
+  {% if similar %}
+  <section class="section section--tight" aria-labelledby="similar-h">
+    <div class="section-head"><h2 id="similar-h">You might also like</h2></div>
+    <div class="grid">
+      {% for vehicle in similar %}
+        {% include "rentals/partials/vehicle_card.html" %}
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

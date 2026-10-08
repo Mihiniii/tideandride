@@ -1,0 +1,21 @@
+{% load rentals_tags %}
+<article class="vcard">
+  <a class="vcard-link" href="{{ vehicle.get_absolute_url }}{% if pickup %}?pickup={{ pickup|date:'Y-m-d' }}&dropoff={{ dropoff|date:'Y-m-d' }}{% endif %}">
+    {% include "rentals/partials/media.html" %}
+    <div class="vcard-body">
+      <p class="vcard-place">{{ vehicle.location.name }}</p>
+      <h3 class="vcard-name">{{ vehicle.name }}</h3>
+      <ul class="specs">
+        <li>{{ vehicle.seats }} seat{{ vehicle.seats|pluralize }}</li>
+        <li>{{ vehicle.get_transmission_display }}</li>
+        {% if vehicle.surfboard_rack %}<li>Board rack</li>{% endif %}
+      </ul>
+      <p class="vcard-price">
+        <strong>{{ vehicle.price_per_day|money }}</strong> <span>a day</span>
+      </p>
+      {% if days %}
+      <p class="vcard-total">{{ days }} day{{ days|pluralize }} for <strong>{{ vehicle.price_per_day|times:days|money }}</strong></p>
+      {% endif %}
+    </div>
+  </a>
+</article>

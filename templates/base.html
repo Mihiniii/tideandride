@@ -1,0 +1,96 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ SITE_NAME }}: beach vehicle rentals{% endblock %}</title>
+  <meta name="description" content="{% block description %}Rent scooters, tuk-tuks, bicycles, beach buggies and jeeps by the beach. Pick a beach, pick your dates, ride.{% endblock %}">
+  <meta name="theme-color" content="#0F5A66">
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav {% block nav_class %}{% endblock %}">
+    <div class="wrap nav-inner">
+      <a class="brand" href="{% url 'home' %}" aria-label="{{ SITE_NAME }} home">
+        <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+          <circle cx="20" cy="20" r="19" class="brand-ring"/>
+          <path d="M5 24 Q12.5 18 20 24 T35 24" class="brand-wave"/>
+          <circle cx="20" cy="15" r="5" class="brand-sun"/>
+        </svg>
+        <span>{{ SITE_NAME }}</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu">
+        <span class="sr-only">Menu</span><span class="bars" aria-hidden="true"></span>
+      </button>
+      <nav id="nav-menu" class="nav-menu" aria-label="Main">
+        <a href="{% url 'vehicle_list' %}" {% if request.resolver_match.url_name == 'vehicle_list' %}aria-current="page"{% endif %}>Fleet</a>
+        <a href="{% url 'home' %}#beaches">Beaches</a>
+        <a href="{% url 'contact' %}" {% if request.resolver_match.url_name == 'contact' %}aria-current="page"{% endif %}>Contact</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'my_bookings' %}" {% if request.resolver_match.url_name == 'my_bookings' %}aria-current="page"{% endif %}>My bookings</a>
+          <form action="{% url 'logout' %}" method="post" class="nav-logout">
+            {% csrf_token %}
+            <button type="submit" class="linkish">Log out</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}">Log in</a>
+          <a class="btn btn--flag btn--sm" href="{% url 'vehicle_list' %}">Book a ride</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  {% if messages %}
+  <div class="toasts wrap" role="status">
+    {% for message in messages %}
+      <p class="toast toast--{{ message.tags }}">{{ message }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <main id="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <svg class="footer-wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 30 Q180 0 360 30 T720 30 T1080 30 T1440 30 V60 H0Z"/>
+    </svg>
+    <div class="footer-body">
+      <div class="wrap footer-grid">
+        <div>
+          <p class="footer-brand">{{ SITE_NAME }}</p>
+          <p class="footer-note">Scooters, tuk-tuks, bikes and buggies, parked by the sand on Sri Lanka's south and east coasts.</p>
+        </div>
+        <div>
+          <h2 class="footer-h">Rent</h2>
+          <ul>
+            <li><a href="{% url 'vehicle_list' %}">All vehicles</a></li>
+            <li><a href="{% url 'home' %}#beaches">Pickup beaches</a></li>
+            {% if user.is_authenticated %}<li><a href="{% url 'my_bookings' %}">My bookings</a></li>{% else %}<li><a href="{% url 'signup' %}">Create an account</a></li>{% endif %}
+          </ul>
+        </div>
+        <div>
+          <h2 class="footer-h">Talk to us</h2>
+          <ul>
+            <li><a href="tel:{{ SITE_PHONE|cut:' ' }}">{{ SITE_PHONE }}</a></li>
+            <li><a href="mailto:{{ SITE_EMAIL }}">{{ SITE_EMAIL }}</a></li>
+            <li><a href="{% url 'contact' %}">Send a message</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="wrap footer-small">© {% now "Y" %} {{ SITE_NAME }}. Wear a helmet. Watch for dogs on the coast road.</p>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/main.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

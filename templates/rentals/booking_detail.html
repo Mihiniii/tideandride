@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load rentals_tags %}
+
+{% block title %}Booking {{ booking.reference }}: {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="wrap narrow">
+  <div class="pass status--{{ booking.status }}">
+    <div class="pass-top">
+      <div>
+        <p class="pass-label">Rental ticket</p>
+        <p class="pass-ref">{{ booking.reference }}</p>
+      </div>
+      <p class="pill pill--{{ booking.status }}">{{ booking.get_status_display }}</p>
+    </div>
+
+    <div class="pass-vehicle">
+      {% with vehicle=booking.vehicle %}{% include "rentals/partials/media.html" %}{% endwith %}
+      <div>
+        <h1>{{ booking.vehicle.name }}</h1>
+        <p>{{ booking.vehicle.location.name }}{% if booking.handover == "hotel" %}, delivered to {{ booking.hotel_name }}{% else %}, collect from the beach shop{% endif %}</p>
+      </div>
+    </div>
+
+    <div class="pass-dates">
+      <div>
+        <p class="pass-label">Pickup</p>
+        <p class="pass-date">{{ booking.pickup_date|date:"D j M" }}</p>
+      </div>
+      <svg class="pass-arrow" viewBox="0 0 80 20" aria-hidden="true"><path d="M0 10 Q10 2 20 10 T40 10 T60 10 L74 10 M68 4 L76 10 L68 16"/></svg>
+      <div>
+        <p class="pass-label">Return</p>
+        <p class="pass-date">{{ booking.return_date|date:"D j M" }}</p>
+      </div>
+    </div>
+
+    <div class="pass-perf" aria-hidden="true"></div>
+
+    <dl class="pass-money">
+      <div><dt>{{ booking.days }} day{{ booking.days|pluralize }} × {{ booking.price_per_day|money }}</dt><dd>{{ booking.total_price|money }}</dd></div>
+      {% if booking.deposit %}<div><dt>Refundable deposit at pickup</dt><dd>{{ booking.deposit|money }}</dd></div>{% endif %}
+      <div><dt>Name</dt><dd>{{ booking.full_name }}</dd></div>
+      <div><dt>Phone</dt><dd>{{ booking.phone }}</dd></div>
+    </dl>
+
+    {% if booking.status == "pending" %}
+    <p class="pass-next">A host will call {{ booking.phone }} within a few hours to agree the handover time. Bring your licence and the deposit.</p>
+    {% elif booking.status == "confirmed" %}
+    <p class="pass-next">You're all set. Show this reference at handover, along with your licence.</p>
+    {% endif %}
+  </div>
+
+  <div class="pass-actions">
+    <a class="btn btn--lagoon" href="{% url 'my_bookings' %}">All my bookings</a>
+    {% if booking.can_cancel %}
+    <form method="post" action="{% url 'cancel_booking' booking.reference %}" data-confirm="Cancel booking {{ booking.reference }}?">
+      {% csrf_token %}
+      <button class="btn btn--ghost" type="submit">Cancel booking</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

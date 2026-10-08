@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load rentals_tags %}
+
+{% block title %}Fleet: {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="pagehead">
+  <div class="wrap">
+    <h1>The fleet</h1>
+    <p>
+      {% if pickup %}
+        {{ page.paginator.count }} vehicle{{ page.paginator.count|pluralize }} free from {{ pickup|date:"j M" }} to {{ dropoff|date:"j M" }}.
+      {% else %}
+        {{ page.paginator.count }} vehicle{{ page.paginator.count|pluralize }} on the coast. Add dates to see what's free.
+      {% endif %}
+    </p>
+  </div>
+</section>
+
+<div class="wrap fleet">
+  <form class="filters" method="get" aria-label="Filter vehicles">
+    <div class="field"><label for="id_location">Beach</label>{{ form.location }}</div>
+    <div class="field"><label for="id_pickup">Pickup</label>{{ form.pickup }}</div>
+    <div class="field"><label for="id_dropoff">Return</label>{{ form.dropoff }}
+      {% for e in form.dropoff.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+    <div class="field"><label for="id_max_price">Max a day ({{ CURRENCY }})</label>{{ form.max_price }}</div>
+    <div class="field"><label for="id_sort">Sort</label>{{ form.sort }}</div>
+    {% if form.category.value %}<input type="hidden" name="category" value="{{ form.category.value }}">{% endif %}
+    <div class="filters-actions">
+      <button class="btn btn--lagoon" type="submit">Update</button>
+      <a class="textlink" href="{% url 'vehicle_list' %}">Clear</a>
+    </div>
+  </form>
+
+  <nav class="chips" aria-label="Vehicle type">
+    <a class="chip" href="{% query_with category='' %}" {% if not form.category.value %}aria-current="true"{% endif %}>All</a>
+    {% for c in categories %}
+      <a class="chip" href="{% query_with category=c.slug %}" {% if form.category.value == c.slug %}aria-current="true"{% endif %}>{{ c.name }}</a>
+    {% endfor %}
+  </nav>
+
+  {% if page.object_list %}
+  <div class="grid">
+    {% for vehicle in page.object_list %}
+      {% include "rentals/partials/vehicle_card.html" %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="emptystate">
+    <h2>Nothing free with those filters</h2>
+    <p>Try another beach, shift your dates by a day, or raise the price limit.</p>
+    <a class="btn btn--lagoon" href="{% url 'vehicle_list' %}">Show every vehicle</a>
+  </div>
+  {% endif %}
+
+  {% if page.has_other_pages %}
+  <nav class="pager" aria-label="Pages">
+    {% if page.has_previous %}<a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page.previous_page_number }}">Previous</a>{% endif %}
+    <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+    {% if page.has_next %}<a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page.next_page_number }}">Next</a>{% endif %}
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}
